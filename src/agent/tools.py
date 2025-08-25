@@ -44,11 +44,11 @@ class PaperFetcher:
                 title=result.title,
                 authors=[author.name for author in result.authors],
                 summary=result.summary,
-                pdf_url=result.pdf_link
+                pdf_url=result.pdf_url
             )
             papers.append(paper)
         
-        print(f"Found {len(papers)} papers in arXiv sobre '{query}'.")
+        print(f"Found {len(papers)} papers in arXiv about '{query}'.")
         return papers
     
 # Just need to add a new method in this class if i want to change the data source
