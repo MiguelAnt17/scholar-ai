@@ -46,5 +46,7 @@ class PaperFetcher:
             )
             papers.append(paper)
         
-        print(f"Found {len(papers)} papers in arXiv about '{query}'.")
+        print(f"Found {len(papers)} papers in arXiv sobre '{query}'.")
         return papers
+    
+# Just need to add a new method in this class if i want to change the data source
