@@ -10,6 +10,8 @@ class Paper:
     summary: str
     pdf_url: str
 
+# Class Paper is created to convert the format of the arXiv results into an internal format "Paper" - Abstraction
+
 class PaperFetcher:
     """
     Class to search and obatin the papers from academics sources as arXiv
