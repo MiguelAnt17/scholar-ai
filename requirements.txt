@@ -3,3 +3,6 @@ streamlit
 chromadb
 PyMuPDF
 arxiv
+sentence-transformers
+langchain-community  
+tf-keras

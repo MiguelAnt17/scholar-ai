@@ -1,3 +1,48 @@
+import os
+from agent.rag import VectorStoreManager
+
+def test_indexing():
+
+    data_dir = "data"
+    # Lista todos os ficheiros .txt na pasta de dados
+    txt_files = [f for f in os.listdir(data_dir) if f.endswith(".txt")]
+
+    if not txt_files:
+        print("No .txt file founded on folder /data. Execute the pipeline first.")
+        return
+
+    # Pega no primeiro ficheiro para o teste
+    first_file_path = os.path.join(data_dir, txt_files[0])
+    print(f"--- Testing the indexation in file: {first_file_path} ---")
+
+    try:
+        with open(first_file_path, "r", encoding="utf-8") as f:
+            text_content = f.read()
+    except FileNotFoundError:
+        print(f"Error: No file found {first_file_path}")
+        return
+    except Exception as e:
+        print(f"Error reading the file: {e}")
+        return
+        
+    manager = VectorStoreManager()
+    manager.index_text(text_content, source=txt_files[0])
+
+if __name__ == "__main__":
+    test_indexing()
+
+
+
+
+
+
+
+
+
+
+
+'''
+PHASE 2 MAIN.PY
 
 import argparse
 import os
@@ -48,7 +93,7 @@ if __name__ == "__main__":
     
     main(args.query)
 
-# The prompt line was: python src/main.py --query "transformers models"
+# The prompt line was: python src/main.py --query "transformers models"'''
 
 
 '''
