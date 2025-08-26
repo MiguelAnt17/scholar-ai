@@ -1,3 +1,45 @@
+# src/main.py
+from agent.rag import VectorStoreManager, RAGChain
+
+def test_rag_query():
+    """
+    Função para testar uma pergunta usando a cadeia de RAG.
+    """
+    print("--- A inicializar a base de dados vetorial e a cadeia de RAG ---")
+    # Assume que a indexação já foi feita e a DB existe em 'data/chroma_db'
+    manager = VectorStoreManager()
+    retriever = manager.get_retriever()
+    
+    if not retriever:
+        print("Retriever não pôde ser inicializado. A base de dados vetorial está vazia?")
+        return
+
+    rag_chain_manager = RAGChain(retriever)
+    chain = rag_chain_manager.create_chain()
+
+    print("--- Base de dados e cadeia prontas. A fazer uma pergunta. ---")
+    
+    # Exemplo de pergunta. Tente fazer uma pergunta sobre o conteúdo do artigo que indexou.
+    question = "What is the main topic of the mathematical model discussed?"
+    
+    try:
+        response = chain.invoke(question)
+        print("\n--- Pergunta ---")
+        print(question)
+        print("\n--- Resposta Gerada ---")
+        print(response)
+    except Exception as e:
+        print(f"\nOcorreu um erro ao invocar a cadeia de RAG: {e}")
+        print("Verifique se o Ollama está a correr e se o modelo 'llama3' está descarregado.")
+
+if __name__ == "__main__":
+    test_rag_query()
+
+
+
+'''
+PHASE 2 ACTION 2 MAIN.PY
+
 import os
 from agent.rag import VectorStoreManager
 
@@ -31,7 +73,7 @@ def test_indexing():
 if __name__ == "__main__":
     test_indexing()
 
-
+'''
 
 
 

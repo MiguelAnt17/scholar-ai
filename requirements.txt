@@ -6,3 +6,5 @@ arxiv
 sentence-transformers
 langchain-community  
 tf-keras
+langchain-openai 
+ollama

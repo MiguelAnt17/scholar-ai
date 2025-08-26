@@ -1,6 +1,10 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_community.llms import Ollama 
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 
 class VectorStoreManager:
     """
@@ -50,3 +54,57 @@ class VectorStoreManager:
 
         self.vector_store.persist()
         print("Indexation done.")
+
+
+    def get_retriever(self, k: int = 4):
+        """
+        Get a retriever from the vectorial database
+        Retriever does the search by similarity
+
+        Args:
+            k (int): number of relevants chunks to return
+
+        Returns:
+            Langchain retriever
+        """
+        return self.vector_store.as_retriever(search_kwargs={"k": k})
+
+
+
+class RAGChain:
+    """
+    RAG Logic
+    """
+    def __init__(self, retriever):
+        self.retriever = retriever
+        
+        # LLM that will be used
+        self.llm = Ollama(model="llama3")
+
+        # Promp engineering
+        template = """
+        Based solely on the following CONTEXT, answer the QUESTION.
+        If the answer is not in the context, say, “I did not find information about this in the context provided.”
+        Be concise and direct.
+
+        CONTEXT:
+        {context}
+
+        QUESTION:
+        {question}
+
+        ANSWER:
+        """
+        self.prompt = PromptTemplate.from_template(template)
+
+    def create_chain(self):
+        """
+        Create and returns a RAG chain usiong LangChain Expression Language (LCEL)
+        """
+        chain = (
+            {"context": self.retriever, "question": RunnablePassthrough()}
+            | self.prompt
+            | self.llm
+            | StrOutputParser()
+        )
+        return chain
