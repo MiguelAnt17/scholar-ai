@@ -1,4 +1,6 @@
-# src/main.py
+'''
+PHASE 2 ACTION 2
+
 from agent.rag import VectorStoreManager, RAGChain
 
 def test_rag_query():
@@ -34,11 +36,11 @@ def test_rag_query():
 
 if __name__ == "__main__":
     test_rag_query()
-
+'''
 
 
 '''
-PHASE 2 ACTION 2 MAIN.PY
+PHASE 2 ACTION 1 MAIN.PY
 
 import os
 from agent.rag import VectorStoreManager

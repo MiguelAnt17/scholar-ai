@@ -8,3 +8,4 @@ langchain-community
 tf-keras
 langchain-openai 
 ollama
+langchain-hub

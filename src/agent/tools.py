@@ -1,5 +1,8 @@
 import arxiv
 from dataclasses import dataclass
+from langchain.tools import BaseTool
+from typing import Type
+from pydantic import BaseModel, Field
 
 
 @dataclass
@@ -52,3 +55,35 @@ class PaperFetcher:
         return papers
     
 # Just need to add a new method in this class if i want to change the data source
+
+
+
+class SearchInput(BaseModel):
+    query: str = Field(description="Tha search topic for the academics articles.")
+
+class SearchPapersTool(BaseTool):
+    name = "SearchPapersTool"
+    description = "Use this tool to search for academic articles on arXiv on a specific topic."
+    args_schema: Type[BaseModel] = SearchInput
+    
+    def _run(self, query: str) -> str:
+        
+        fetcher = PaperFetcher()
+        papers = fetcher.search(query)
+        if not papers:
+            return f"No articles found on '{query}'."
+        
+      
+        results_str = [
+            (
+                f"Title: {p.title}\n"
+                f"Authors: {', '.join(p.authors)}\n"
+                f"URL of the PDF: {p.pdf_url}\n"
+                f"Summary: {p.summary[:500]}..." # only the first 500 characters
+            )
+            for p in papers
+        ]
+        return "\n---\n".join(results_str)
+
+    def _arun(self, query: str):
+        raise NotImplementedError("Cannot support asyncronous execution.")
