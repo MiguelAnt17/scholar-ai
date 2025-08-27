@@ -62,3 +62,6 @@ Uploading the PDF: http://arxiv.org/pdf/2204.07780v1...
 Download finished. Extracting text...
 Text extraction concluded.
 Text from the article saved at: data\Towards Lightweight Transformer via Groupwise Transformation for VisionandLanguage Tasks.txt
+
+
+Fourth testing session: Executor.py
