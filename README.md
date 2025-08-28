@@ -8,6 +8,22 @@ This project is an autonomous agent that receives a research topic, finds the 3-
 ## Specifications
 For a detailed description of the input, expected output format, and functional requirements, please refer to the [Detailed Specifications Document](docs/SPECIFICATIONS.md).
 
+
+## Agent Explanation
+
+src/tools.py
+1 - A LangChain agent receives a user's prompt ("Use this tool to search for academic articles on arXiv on a specific topic.")
+2 - The agent, based on its training and the description of SearchPapersTool, decides that this tool is relevant.
+3- The agent then looks at args_schema (SearchInput) to understand what arguments the tool expects. It will try to extract the query ("large language models from 2023") from the user's prompt.
+4 - The agent calls the _run method of SearchPapersTool with the extracted query.
+5 - SearchPapersTool uses PaperFetcher to query arXiv.
+6 - PaperFetcher converts the raw arXiv results into Paper objects.
+7 - SearchPapersTool formats these Paper objects into a single, readable string.
+8 - This string result is returned to the Langchain agent.
+9 - The agent can then use this information to formulate a final answer to the user.
+
+
+
 ## Testing
 First testing session: tools.py
 
@@ -65,3 +81,6 @@ Text from the article saved at: data\Towards Lightweight Transformer via Groupwi
 
 
 Fourth testing session: Executor.py
+
+
+
