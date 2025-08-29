@@ -11,7 +11,7 @@ For a detailed description of the input, expected output format, and functional 
 
 ## Agent Explanation
 
-src/agent/tools.py
+**src/agent/tools.py**
 
 1 - A LangChain agent receives a user's prompt ("Use this tool to search for academic articles on arXiv on a specific topic.")
 
@@ -31,7 +31,7 @@ src/agent/tools.py
 
 9 - The agent can then use this information to formulate a final answer to the user.
 
-src/processing/parser.py
+**src/processing/parser.py**
 
 1 - Download a PDF from a URL in a streaming fashion, saving it to a temporary file.
 
@@ -43,7 +43,7 @@ src/processing/parser.py
 
 5 - Clean up by deleting the temporary PDF file when done.
 
-src/agent/rag.py
+**src/agent/rag.py**
 
 1 - Index Documents: You would first use VectorStoreManager to load and index your documents (e.g., PDFs, text files). This involves:
     - Splitting the documents into chunks.
@@ -56,7 +56,7 @@ src/agent/rag.py
     - The prompt combines the user's question with these retrieved context documents into a well-structured prompt for the LLM.
     - The llm (llama3) then generates an answer, using the provided context as its primary source of information. This significantly reduces the chances of the LLM "hallucinating" and helps ensure the answer is grounded in your specific data.
 
-src/agent/executor.py
+**src/agent/executor.py**
 
 1 - Initialization: When ResearchAgentExecutor is instantiated, it sets up its LLM, its tools (like SearchPapersTool), and loads the ReAct prompt. It then combines these into an agent and an agent_executor.
 
