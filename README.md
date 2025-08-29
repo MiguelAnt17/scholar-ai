@@ -12,28 +12,44 @@ For a detailed description of the input, expected output format, and functional 
 ## Agent Explanation
 
 src/agent/tools.py
+
 1 - A LangChain agent receives a user's prompt ("Use this tool to search for academic articles on arXiv on a specific topic.")
+
 2 - The agent, based on its training and the description of SearchPapersTool, decides that this tool is relevant.
+
 3- The agent then looks at args_schema (SearchInput) to understand what arguments the tool expects. It will try to extract the query ("large language models from 2023") from the user's prompt.
+
 4 - The agent calls the _run method of SearchPapersTool with the extracted query.
+
 5 - SearchPapersTool uses PaperFetcher to query arXiv.
+
 6 - PaperFetcher converts the raw arXiv results into Paper objects.
+
 7 - SearchPapersTool formats these Paper objects into a single, readable string.
+
 8 - This string result is returned to the Langchain agent.
+
 9 - The agent can then use this information to formulate a final answer to the user.
 
 src/processing/parser.py
+
 1 - Download a PDF from a URL in a streaming fashion, saving it to a temporary file.
+
 2 - Extract all text content from the downloaded PDF using PyMuPDF.
+
 3 - Clean the extracted text by normalizing whitespace (replacing newlines and collapsing multiple spaces).
+
 4 - Handle errors gracefully during download and processing.
+
 5 - Clean up by deleting the temporary PDF file when done.
 
 src/agent/rag.py
+
 1 - Index Documents: You would first use VectorStoreManager to load and index your documents (e.g., PDFs, text files). This involves:
     - Splitting the documents into chunks.
     - Generating embeddings for each chunk.
     - Storing these embeddings (and the original text chunks) in the Chroma vector database.
+    
 2 - Ask a Question: When a user asks a question:
     - The RAGChain receives the question.
     - The retriever (part of the chain) takes the user's question, converts it into an embedding, and searches the Chroma database for the most semantically similar text chunks. These are the "context" documents.
@@ -41,8 +57,11 @@ src/agent/rag.py
     - The llm (llama3) then generates an answer, using the provided context as its primary source of information. This significantly reduces the chances of the LLM "hallucinating" and helps ensure the answer is grounded in your specific data.
 
 src/agent/executor.py
+
 1 - Initialization: When ResearchAgentExecutor is instantiated, it sets up its LLM, its tools (like SearchPapersTool), and loads the ReAct prompt. It then combines these into an agent and an agent_executor.
+
 2 - User Query: The run method is called with a user's research query (e.g., "Summarize the latest advancements in quantum computing").
+
 3 - Agent Execution Loop (ReAct):
     - The agent_executor sends the query to the LLM (llama3).
     - LLM's Thought: The LLM, guided by the ReAct prompt, thinks about the query. It might determine that to answer this, it needs to search for papers.
@@ -54,6 +73,7 @@ src/agent/executor.py
     - Thought: Realize it needs to summarize these papers, or perhaps refine the search, or call another tool if available.
     - Action: Decide to use the LLM itself to summarize the observed papers.
     - This cycle (Thought, Action, Observation) continues until the LLM determines it has enough information to formulate a Final Answer.
+    
 4 - Final Answer: Once the LLM generates a Final Answer, the agent_executor returns it as the output of the run method.
 
 
