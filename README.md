@@ -12,6 +12,7 @@ For a detailed description of the input, expected output format, and functional 
 ## Agent Explanation
 
 **src/agent/tools.py**
+![Academic Paper Search System Architecture](docs/tools.png)
 
 1 - A LangChain agent receives a user's prompt ("Use this tool to search for academic articles on arXiv on a specific topic.")
 
