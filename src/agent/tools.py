@@ -57,19 +57,18 @@ class PaperFetcher:
 # Just need to add a new method in this class if i want to change the data source
 
 
-
 class SearchInput(BaseModel):
-    query: str = Field(description="Tha search topic for the academics articles.")
+    query: str = Field(description="The search topic for the academic articles.")
 
 class SearchPapersTool(BaseTool):
-    name = "SearchPapersTool"
-    description = "Use this tool to search for academic articles on arXiv on a specific topic."
+    name: str = "Search_Papers"  # Added type annotation
+    description: str = "Use this tool to search for academic articles on arXiv on a specific topic."  # Added type annotation
     args_schema: Type[BaseModel] = SearchInput
     
     def _run(self, query: str) -> str:
         
         fetcher = PaperFetcher()
-        papers = fetcher.search(query)
+        papers = fetcher.search_arxiv(query)  # Fixed method name
         if not papers:
             return f"No articles found on '{query}'."
         
@@ -86,4 +85,4 @@ class SearchPapersTool(BaseTool):
         return "\n---\n".join(results_str)
 
     def _arun(self, query: str):
-        raise NotImplementedError("Cannot support asyncronous execution.")
+        raise NotImplementedError("Cannot support asynchronous execution.")  # Fixed typo
