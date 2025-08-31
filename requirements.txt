@@ -9,3 +9,5 @@ tf-keras
 langchain-openai 
 ollama
 langchain-hub
+flask
+flask_cors
