@@ -11,3 +11,4 @@ ollama
 langchain-hub
 flask
 flask_cors
+langchain-core
