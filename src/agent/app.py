@@ -61,7 +61,6 @@ def parse_agent_result(result):
     """
     papers = []
     
-    # Split by separator (adjust based on your tools.py output format)
     sections = result.split('---')
     
     for section in sections:
