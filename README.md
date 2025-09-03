@@ -8,6 +8,9 @@ This project is an autonomous agent that receives a research topic, finds the 3-
 ## Specifications
 For a detailed description of the input, expected output format, and functional requirements, please refer to the [Detailed Specifications Document](docs/SPECIFICATIONS.md).
 
+## Agent Interface
+![UI - Example](docs/interface.png)
+Built with pure HTML, CSS, and JavaScript, the front end provides a user-friendly experience for academic research. Users can input a research query, select a display format (Card View, Plain Text, or Markdown), and view simulated search results. The interface includes dynamic elements like a loading spinner, search history, and a save function, demonstrating a clean and functional design ready to be integrated with a powerful AI backend.
 
 ## Agent Explanation
 
@@ -80,6 +83,9 @@ For a detailed description of the input, expected output format, and functional 
     - This cycle (Thought, Action, Observation) continues until the LLM determines it has enough information to formulate a Final Answer.
     
 4 - Final Answer: Once the LLM generates a Final Answer, the agent_executor returns it as the output of the run method.
+
+
+
 
 
 
