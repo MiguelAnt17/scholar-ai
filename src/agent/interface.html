@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholar AI - Research Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .search-section {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .search-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .format-options label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .format-select {
+            padding: 8px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .results-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .save-btn {
+            padding: 8px 16px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background: #059669;
+        }
+
+        .results-content {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #4f46e5;
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            line-height: 1.6;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .paper-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #4f46e5;
+            transition: transform 0.2s ease;
+        }
+
+        .paper-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .paper-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .paper-authors {
+            color: #6b7280;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .paper-summary {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .paper-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #4f46e5;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .paper-link:hover {
+            background: #3730a3;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .history-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .history-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .history-item {
+            padding: 10px 15px;
+            background: #f1f5f9;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: #e2e8f0;
+        }
+
+        .clear-history {
+            padding: 6px 12px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .format-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 Scholar AI</h1>
+            <p>Intelligent Academic Research Agent</p>
+        </div>
+
+        <div class="main-content">
+            <div class="search-section">
+                <div class="search-form">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Enter your research query (e.g., 'machine learning in healthcare')"
+                        id="searchInput"
+                    >
+                    <button class="search-btn" id="searchBtn">
+                        <span id="btnText">🔍 Search</span>
+                    </button>
+                </div>
+                
+                <div class="format-options">
+                    <label for="formatSelect">Output Format:</label>
+                    <select class="format-select" id="formatSelect">
+                        <option value="cards">Card View</option>
+                        <option value="text">Plain Text</option>
+                        <option value="markdown">Markdown</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Searching academic papers...</p>
+                <small>This may take a few moments</small>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="results-header">
+                    <h2 class="results-title" id="resultsTitle">Search Results</h2>
+                    <button class="save-btn" id="saveBtn">💾 Save Results</button>
+                </div>
+                <div class="results-content" id="resultsContent"></div>
+            </div>
+
+            <div class="history-section">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 class="history-title">Recent Searches</h3>
+                    <button class="clear-history" id="clearHistory">Clear</button>
+                </div>
+                <div id="searchHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ScholarAI {
+            constructor() {
+                this.searchInput = document.getElementById('searchInput');
+                this.searchBtn = document.getElementById('searchBtn');
+                this.btnText = document.getElementById('btnText');
+                this.loading = document.getElementById('loading');
+                this.resultsSection = document.getElementById('resultsSection');
+                this.resultsTitle = document.getElementById('resultsTitle');
+                this.resultsContent = document.getElementById('resultsContent');
+                this.formatSelect = document.getElementById('formatSelect');
+                this.saveBtn = document.getElementById('saveBtn');
+                this.searchHistory = document.getElementById('searchHistory');
+                this.clearHistory = document.getElementById('clearHistory');
+                
+                this.currentResults = null;
+                this.history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+                
+                this.initializeEvents();
+                this.loadHistory();
+            }
+
+            initializeEvents() {
+                this.searchBtn.addEventListener('click', () => this.performSearch());
+                this.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.performSearch();
+                });
+                this.saveBtn.addEventListener('click', () => this.saveResults());
+                this.clearHistory.addEventListener('click', () => this.clearSearchHistory());
+            }
+
+            async performSearch() {
+                const query = this.searchInput.value.trim();
+                if (!query) {
+                    alert('Please enter a research query');
+                    return;
+                }
+
+                this.showLoading();
+                this.addToHistory(query);
+
+                try {
+                    // Simulate API call to your research agent
+                    const results = await this.simulateResearch(query);
+                    this.displayResults(query, results);
+                } catch (error) {
+                    this.showError('Failed to perform search. Make sure your agent is running.');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async simulateResearch(query) {
+                // This simulates what your actual agent would return
+                // In a real implementation, you'd make an API call to your Python backend
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const mockResults = [
+                            {
+                                title: `Advanced ${query} Techniques: A Comprehensive Review`,
+                                authors: ['Dr. Jane Smith', 'Prof. John Doe', 'Dr. Alice Johnson'],
+                                summary: `This paper presents a comprehensive review of current ${query} methodologies and their applications in modern research. The study analyzes various approaches and provides insights into future directions for the field. The authors conducted extensive experiments and literature analysis to provide a thorough understanding of the current state of research.`,
+                                pdf_url: 'https://arxiv.org/pdf/2023.12345.pdf',
+                                keywords: ['research', 'methodology', 'analysis', 'machine learning']
+                            },
+                            {
+                                title: `Novel Approaches in ${query}: Recent Developments`,
+                                authors: ['Prof. Sarah Wilson', 'Dr. Michael Brown'],
+                                summary: `Recent developments in ${query} have shown promising results across multiple domains. This work presents novel approaches that significantly improve upon existing methods. The research demonstrates substantial improvements in accuracy and efficiency compared to traditional techniques.`,
+                                pdf_url: 'https://arxiv.org/pdf/2023.67890.pdf',
+                                keywords: ['innovation', 'efficiency', 'performance', 'algorithms']
+                            },
+                            {
+                                title: `${query} Applications in Real-World Scenarios`,
+                                authors: ['Dr. Robert Chen', 'Prof. Maria Garcia', 'Dr. David Kim'],
+                                summary: `This study explores practical applications of ${query} in real-world scenarios. The authors present case studies and implementation strategies that demonstrate the effectiveness of these approaches in production environments. The paper includes detailed performance analysis and recommendations for practitioners.`,
+                                pdf_url: 'https://arxiv.org/pdf/2023.13579.pdf',
+                                keywords: ['applications', 'real-world', 'implementation', 'case studies']
+                            }
+                        ];
+                        resolve(mockResults);
+                    }, 2000);
+                });
+            }
+
+            displayResults(query, results) {
+                this.currentResults = { query, results, timestamp: new Date().toISOString() };
+                this.resultsTitle.textContent = `Results for: "${query}"`;
+                
+                const format = this.formatSelect.value;
+                
+                if (format === 'cards') {
+                    this.displayAsCards(results);
+                } else if (format === 'markdown') {
+                    this.displayAsMarkdown(query, results);
+                } else {
+                    this.displayAsText(results);
+                }
+                
+                this.resultsSection.style.display = 'block';
+            }
+
+            displayAsCards(results) {
+                const cardsHTML = results.map(paper => `
+                    <div class="paper-card">
+                        <h3 class="paper-title">${paper.title}</h3>
+                        <p class="paper-authors"><strong>Authors:</strong> ${paper.authors.join(', ')}</p>
+                        <p class="paper-summary">${paper.summary}</p>
+                        <a href="${paper.pdf_url}" target="_blank" class="paper-link">📄 View PDF</a>
+                        ${paper.keywords ? `<p style="margin-top: 10px; font-size: 12px; color: #6b7280;"><strong>Keywords:</strong> ${paper.keywords.join(', ')}</p>` : ''}
+                    </div>
+                `).join('');
+                
+                this.resultsContent.innerHTML = cardsHTML;
+                this.resultsContent.style.fontFamily = 'inherit';
+            }
+
+            displayAsMarkdown(query, results) {
+                let markdown = `# Research Results: ${query}\n\n`;
+                
+                results.forEach((paper, index) => {
+                    markdown += `## ${index + 1}. ${paper.title}\n\n`;
+                    markdown += `**Authors:** ${paper.authors.join(', ')}\n\n`;
+                    markdown += `**Summary:** ${paper.summary}\n\n`;
+                    markdown += `**PDF:** [${paper.pdf_url}](${paper.pdf_url})\n\n`;
+                    if (paper.keywords) {
+                        markdown += `**Keywords:** ${paper.keywords.join(', ')}\n\n`;
+                    }
+                    markdown += '---\n\n';
+                });
+                
+                this.resultsContent.textContent = markdown;
+                this.resultsContent.style.fontFamily = 'Monaco, Menlo, Consolas, monospace';
+            }
+
+            displayAsText(results) {
+                const textResults = results.map((paper, index) => 
+                    `${index + 1}. ${paper.title}\n` +
+                    `Authors: ${paper.authors.join(', ')}\n` +
+                    `Summary: ${paper.summary}\n` +
+                    `PDF: ${paper.pdf_url}\n` +
+                    (paper.keywords ? `Keywords: ${paper.keywords.join(', ')}\n` : '') +
+                    '---'
+                ).join('\n\n');
+                
+                this.resultsContent.textContent = textResults;
+                this.resultsContent.style.fontFamily = 'Monaco, Menlo, Consolas, monospace';
+            }
+
+            showLoading() {
+                this.loading.style.display = 'block';
+                this.resultsSection.style.display = 'none';
+                this.searchBtn.disabled = true;
+                this.btnText.textContent = '⏳ Searching...';
+            }
+
+            hideLoading() {
+                this.loading.style.display = 'none';
+                this.searchBtn.disabled = false;
+                this.btnText.textContent = '🔍 Search';
+            }
+
+            showError(message) {
+                this.resultsContent.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+                this.resultsSection.style.display = 'block';
+            }
+
+            addToHistory(query) {
+                if (!this.history.includes(query)) {
+                    this.history.unshift(query);
+                    if (this.history.length > 10) {
+                        this.history = this.history.slice(0, 10);
+                    }
+                    localStorage.setItem('searchHistory', JSON.stringify(this.history));
+                    this.loadHistory();
+                }
+            }
+
+            loadHistory() {
+                const historyHTML = this.history.map(query => 
+                    `<div class="history-item" onclick="scholarAI.searchInput.value='${query}'">${query}</div>`
+                ).join('');
+                
+                this.searchHistory.innerHTML = historyHTML || '<p style="color: #6b7280; font-style: italic;">No recent searches</p>';
+            }
+
+            clearSearchHistory() {
+                this.history = [];
+                localStorage.removeItem('searchHistory');
+                this.loadHistory();
+            }
+
+            saveResults() {
+                if (!this.currentResults) return;
+                
+                const filename = `scholar_ai_results_${this.currentResults.query.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
+                const content = this.resultsContent.textContent;
+                
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }
+        }
+
+        // Initialize the application
+        const scholarAI = new ScholarAI();
+    </script>
+</body>
+</html>
