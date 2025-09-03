@@ -11,6 +11,7 @@ For a detailed description of the input, expected output format, and functional 
 ## Agent Interface
 ![UI - Example](docs/interface.png)
 Built with pure HTML, CSS, and JavaScript, the front end provides a user-friendly experience for academic research. Users can input a research query, select a display format (Card View, Plain Text, or Markdown), and view simulated search results. The interface includes dynamic elements like a loading spinner, search history, and a save function, demonstrating a clean and functional design ready to be integrated with a powerful AI backend.
+I used Claude to help me build this!
 
 ## Agent Explanation
 
